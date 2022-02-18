@@ -9,6 +9,7 @@ void _input(int *&, int &); // using pointer and reference
 void _output(int *, int);
 
 void quicksort(int *, int *, int *);
+void quicksort2(int *a, int left, int right);
 
 int main()
 {
@@ -21,18 +22,24 @@ int main()
     // cout << temp << endl;
     // _output(arr, n);
 
-    cout << endl;
-    int start = 0, end = n - 1;
-    quicksort(arr, &start, &end);
-    _output(arr, n);
+    // cout << endl;
+    // int start = 0, end = n - 1;
+    // quicksort(arr, &start, &end);
+    // _output(arr, n);
 
     // int a = 6;
     // int b = 5;
     // swap(&a, &b);
     // cout << a << " " << b << endl;
 
+    quicksort2(arr, 0, n - 1);
+    cout << endl;
+    _output(arr, n);
+
     return 0;
 }
+
+// method1: pick rightmost as pivot
 
 void swap(int *a, int *b)
 {
@@ -92,5 +99,37 @@ void _output(int *a, int n)
     for (int i = 0; i < n; i++)
     {
         cout << a[i] << " ";
+    }
+}
+
+// method 2: pick pivot as median
+
+void quicksort2(int *a, int left, int right)
+{
+    int x = a[(left + right) / 2];
+    int i = left, j = right;
+    while (i <= j) // should always have the '=' sign
+    {
+        while (a[i] < x) // min: a[i] > x
+            i++;
+        while (a[j] > x) // min: a[j] < x
+            j--;
+        if (i <= j) // should always have the '=' sign
+        {
+            swap(&a[i], &a[j]);
+            // cout << "swap a[" << i << "] with a[" << j << "]: ";
+            // _output(a, n);
+            // cout << endl;
+            i++;
+            j--;
+        }
+    }
+    if (left < j)
+    {
+        quicksort2(a, left, j);
+    }
+    if (i < right)
+    {
+        quicksort2(a, i, right);
     }
 }
