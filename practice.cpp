@@ -12,40 +12,70 @@ void heapsort(int *, int);
 
 void heapify(int *, int, int);
 void insertion_sort(int *, int);
-void selection_sort(int *a, int n);
+void selection_sort(int *, int);
+
+void delete_(int *, int &, int);
+void concat(int *, int, int *, int, int *&, int &);
+void concat_in_order(int *, int &, int *, int &, int *&, int &);
+void divide(int *, int, int *&, int &, int *&, int &);
+void mergesort(int *, int, int *&, int &);
 
 int main()
 {
-    // int n, *arr;
-    // _input(arr, n);
-    // _output(arr, n);
-
-    int n = 8, *arr;
-    arr = new int[n];
-
-    int a[] = {12, 2, 8, 5, 1, 6, 4, 15};
-    int na = 0;
-
-    for (int i = 0; i < n; i++)
-    {
-        arr[na++] = a[i];
-    }
-
+    int n, *arr;
+    _input(arr, n);
     _output(arr, n);
 
     // cout << endl;
-    // quicksort(arr, 0, n - 1);
+    // int n2, *arr2;
+    // _input(arr2, n2);
+    // _output(arr2, n2);
+
+    // int n = 8, *arr;
+    // arr = new int[n];
+
+    // int a[] = {12, 2, 8, 5, 1, 6, 4, 15};
+    // int na = 0;
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     arr[na++] = a[i];
+    // }
+
     // _output(arr, n);
 
     cout << endl;
+    // quicksort(arr, 0, n - 1);
+    // _output(arr, n);
+
+    // cout << endl;
     // int start = (n / 2) - 1;
     // heapify(arr, n, start);
     // heapsort(arr, n);
     // _output(arr, n);
 
     // insertion_sort(arr, n);
-    selection_sort(arr, n);
-    _output(arr, n);
+    // selection_sort(arr, n);
+    // _output(arr, n);
+
+    // int k;
+    // cin >> k;
+    // delete_(arr, n, k);
+    // cout << endl;
+    // _output(arr, n);
+
+    int n3, *arr3;
+    // concat(arr, n, arr2, n2, arr3, n3);
+    // concat_in_order(arr, n, arr2, n2, arr3, n3);
+    // divide(arr, n, arr2, n2, arr3, n3);
+    // cout << endl;
+    // _output(arr2, n2);
+    // cout << endl;
+    // _output(arr3, n3);
+
+    mergesort(arr, n, arr3, n3);
+    arr = arr3;
+    _output(arr3, n3);
 
     return 0;
 }
@@ -179,5 +209,108 @@ void selection_sort(int *a, int n)
         {
             swap(&a[i], &a[min]);
         }
+    }
+}
+
+void delete_(int *a, int &n, int k)
+{
+    for (int i = k; i < n; i++)
+    {
+        a[i] = a[i + 1];
+    }
+    --n;
+}
+
+void concat(int *a, int na, int *b, int nb, int *&c, int &nc)
+{
+    // this function simply concats 2 array!
+    c = new int[na + nb];
+    nc = 0;
+    for (int i = 0; i < na + nb; i++)
+    {
+        if (i < na)
+        {
+            c[nc++] = a[i];
+        }
+        else
+        {
+            c[nc++] = b[i - na];
+        }
+    }
+}
+
+void concat_in_order(int *a, int &na, int *b, int &nb, int *&c, int &nc)
+{
+    // input to this function should be two arrays in ascending/decending order
+    c = new int[na + nb];
+    nc = 0;
+    while (na > 0 && nb > 0)
+    {
+        if (a[0] > b[0]) // ascending: a[0] > b[0], decending a[0] < b[0]
+        {
+            c[nc++] = b[0];
+            delete_(b, nb, 0);
+        }
+        else
+        {
+            c[nc++] = a[0];
+            delete_(a, na, 0);
+        }
+    }
+
+    if (na > 0)
+    {
+        int ntemp, *temp;
+        concat(c, nc, a, na, temp, ntemp);
+        c = temp;
+        nc = ntemp;
+    }
+
+    if (nb > 0)
+    {
+        int ntemp, *temp;
+        concat(c, nc, b, nb, temp, ntemp);
+        c = temp;
+        nc = ntemp;
+    }
+}
+
+void divide(int *a, int na, int *&b, int &nb, int *&c, int &nc)
+{
+    nb = na / 2;
+    nc = na - nb;
+    int nb_ = 0, nc_ = 0;
+    b = new int[nb];
+    c = new int[nc];
+    for (int i = 0; i < na; i++)
+    {
+        if (i < nb)
+        {
+            b[nb_++] = a[i];
+        }
+        else
+        {
+            c[nc_++] = a[i];
+        }
+    }
+}
+
+void mergesort(int *a, int n, int *&result, int &n_re)
+{
+    result = new int[n];
+    n_re = 0;
+    if (n == 1)
+    {
+        result = a;
+        n_re = 1;
+    }
+    else
+    {
+        int *a1, n1, *a2, n2;
+        divide(a, n, a1, n1, a2, n2);
+        int *temp1, *temp2;
+        mergesort(a1, n1, temp1, n1);
+        mergesort(a2, n2, temp2, n2);
+        concat_in_order(temp1, n1, temp2, n2, result, n_re);
     }
 }
