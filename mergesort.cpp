@@ -13,6 +13,9 @@ void divide_(int *, int, int *&, int &, int *&, int &);
 
 void mergesort(int *, int, int *&);
 
+void merge(int *, int, int, int);
+void mergesort2(int *, int, int);
+
 int main()
 {
     int n1, *arr1;
@@ -47,10 +50,14 @@ int main()
     // delete_(arr1, n1, k);
     // _output(arr1, n1);
 
-    int *temp;
-    mergesort(arr1, n1, temp);
-    arr1 = temp;
+    // int *temp;
+    // mergesort(arr1, n1, temp);
+    // arr1 = temp;
+    // cout << endl;
+    // _output(arr1, n1);
+
     cout << endl;
+    mergesort2(arr1, 0, n1 - 1);
     _output(arr1, n1);
 
     return 0;
@@ -182,5 +189,69 @@ void mergesort(int *a, int na, int *&result)
         // cout << "result_a2: ";
         // _output(result_a2, n2);
         concat_in_order(result_a1, n1, result_a2, n2, result, na);
+    }
+}
+
+void merge(int *a, int left, int mid, int right)
+{
+    int nb = mid - left + 1;
+    int nc = right - mid;
+
+    int *b = new int[nb];
+    int *c = new int[nc];
+    int nb_ = 0, nc_ = 0;
+
+    for (int i = 0; i < nb + nc; i++)
+    {
+        if (i < nb)
+        {
+            b[nb_++] = a[left + i];
+        }
+        else
+        {
+            c[nc_++] = a[left + i];
+        }
+    }
+
+    nb_ = 0;
+    nc_ = 0;
+    int index = left;
+
+    while (nb_ < nb && nc_ < nc)
+    {
+        if (b[nb_] <= c[nc_]) // b[nb_] <= c[nc_]: ascending sort
+        {                     // b[nb_] >= c[nc_]: descending sort
+            a[index++] = b[nb_++];
+        }
+        else
+        {
+            a[index++] = c[nc_++];
+        }
+    }
+
+    while (nb_ < nb)
+    {
+        a[index++] = b[nb_++];
+    }
+
+    while (nc_ < nc)
+    {
+        a[index++] = c[nc_++];
+    }
+}
+
+void mergesort2(int *a, int begin, int end)
+{
+
+    if (begin >= end)
+    {
+        return;
+    }
+    else
+    {
+        int mid = (begin + end) / 2;
+        mergesort2(a, begin, mid);
+        mergesort2(a, mid + 1, end);
+        merge(a, begin, mid, end);
     }
 }
