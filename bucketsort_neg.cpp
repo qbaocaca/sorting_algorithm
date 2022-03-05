@@ -1,13 +1,12 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
-#include <cmath>
 
 using namespace std;
 
 struct node
 {
-    int info;
+    float info;
     node *next;
     bool check = false;
 };
@@ -17,61 +16,59 @@ struct list
     node *head, *tail;
 };
 
-void _input(int *&, int &); // using pointer and reference
-void _output(int *, int);
+void _input(float *&, int &); // using pointer and reference
+void _output(float *, int);
 
 void print_list(list);
 void initialize_list(list &);
-void add_tail(list &, int);
+void add_tail(list &, float);
 node *removeafter(list &, node *);
 void addafter(list &, node *, node *);
 void insertion_sort(list &);
 void input(list &);
-void bucketsort(int *, int, int);
-int find_max(int *, int);
-int find_min(int *, int);
+void bucketsort(float *, int);
+void bucketsort_neg(float *, int);
 
 int main()
 {
-    //(int *arr;
-    // int n;
-    // _input(arr, n);
-    // _output(arr, n);
-
-    // cout << endl;
-    // bucketsort(arr, n, 10);
-    // _output(arr, n);
-
+    float *arr;
     int n;
-    cout << "insert how many: ";
-    cin >> n;
-
-    int *arr = new int[n];
-    srand((unsigned int)time(NULL));
-    for (int i = 0; i < n; i++)
-    {
-        arr[i] = rand() % 101;
-    }
+    _input(arr, n);
     _output(arr, n);
 
     cout << endl;
-    bucketsort(arr, n, 10);
+    // bucketsort(arr, n);
+    bucketsort_neg(arr, n);
     _output(arr, n);
+
+    // int n;
+    // cout << "insert how many: ";
+    // cin >> n;
+
+    // float *arr = new float[n];
+    // srand((unsigned int)time(NULL));
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    //     arr[i] = r;
+    // }
+    // _output(arr, n);
+
+    // cout << endl;
+    // bucketsort(arr, n);
+    // _output(arr, n);
 
     return 0;
 }
 
-// bucket sort for(int values having integer part
+// bucket sort for values in range 0 to 1
 // to do descending, fix both bucketsort and insertion sort
 
-void bucketsort(int *a, int n, int num_bucket)
+void bucketsort(float *a, int n)
 {
-    int max = find_max(a, n);
-    double temp = (double)max / num_bucket;
-    int divider = ceil(temp);
-
-    list *buckets = new list[num_bucket];
-    for (int i = 0; i < num_bucket; i++)
+    list *buckets = new list[10];
+    for (int i = 0; i < 10; i++)
     {
         initialize_list(buckets[i]);
     }
@@ -81,8 +78,8 @@ void bucketsort(int *a, int n, int num_bucket)
     // but because there's something wrong with my code
     // so I need this!
 
-    int *bucket_index = new int[num_bucket];
-    for (int i = 0; i < num_bucket; i++)
+    int *bucket_index = new int[10];
+    for (int i = 0; i < 10; i++)
     {
         bucket_index[i] = 0;
     }
@@ -90,14 +87,14 @@ void bucketsort(int *a, int n, int num_bucket)
     // add the elements to buckets
     for (int i = 0; i < n; i++)
     {
-        int index = a[i] / divider;
+        int index = 10 * a[i];
         add_tail(buckets[index], a[i]);
     }
 
     // if buckets have elements, label it 1. Otherwise, 0.
     for (int i = 0; i < n; i++)
     {
-        int index = a[i] / divider;
+        int index = 10 * a[i];
         if (bucket_index[index] == 0)
         {
             bucket_index[index] = 1;
@@ -106,7 +103,7 @@ void bucketsort(int *a, int n, int num_bucket)
 
     // empty buckets which are empty
     // since program sometimes throw trash values to my buckets
-    for (int i = 0; i < num_bucket; i++)
+    for (int i = 0; i < 10; i++)
     {
         if (bucket_index[i] == 0)
         {
@@ -120,7 +117,7 @@ void bucketsort(int *a, int n, int num_bucket)
 
     for (int i = 0; i < n; i++)
     {
-        int index = a[i] / divider;
+        int index = 10 * a[i];
         node *p = buckets[index].head;
         while (p != NULL)
         {
@@ -135,7 +132,7 @@ void bucketsort(int *a, int n, int num_bucket)
 
     // insertion sort
 
-    for (int i = 0; i < num_bucket; i++)
+    for (int i = 0; i < 10; i++)
     {
         if (buckets[i].head != NULL)
         {
@@ -153,12 +150,12 @@ void bucketsort(int *a, int n, int num_bucket)
     //     cout << endl;
     // }
 
-    int *output = new int[n];
+    float *output = new float[n];
     int na_ = 0;
 
     // append the sorted elements from buckets to output array
-    for (int i = num_bucket - 1; i >= 0; i--)
-    // for (int i = 0; i < num_bucket; i++)
+    for (int i = 9; i >= 0; i--) // descending array
+    // for (int i = 0; i < 10; i++)
     {
         if (bucket_index[i] == 1)
         {
@@ -188,7 +185,7 @@ void initialize_list(list &l)
     l.head = l.tail = NULL;
 }
 
-void add_tail(list &l, int x)
+void add_tail(list &l, float x)
 {
     node *pnew = new node;
     pnew->info = x;
@@ -227,7 +224,7 @@ void insertion_sort(list &l)
 
         while (k != i->next)
         {
-            if (k->info < e->info)
+            if (k->info < e->info) // descending array
             // if (k->info >= e->info)
             {
                 break;
@@ -285,17 +282,17 @@ void addafter(list &l, node *a, node *b)
     }
 }
 
-void _input(int *&a, int &n)
+void _input(float *&a, int &n)
 {
     cin >> n;
-    a = new int[n];
+    a = new float[n];
     for (int i = 0; i < n; i++)
     {
         cin >> a[i];
     }
 }
 
-void _output(int *a, int n)
+void _output(float *a, int n)
 {
     for (int i = 0; i < n; i++)
     {
@@ -303,28 +300,47 @@ void _output(int *a, int n)
     }
 }
 
-int find_max(int *a, int n)
+void bucketsort_neg(float *a, int n)
 {
-    int max = 0;
-    for (int i = 1; i < n; i++)
+    float *pos = new float[n];
+    float *neg = new float[n];
+    int na_ = 0, nb_ = 0;
+    for (int i = 0; i < n; i++)
     {
-        if (a[i] > a[max])
+        if (a[i] < 0)
         {
-            max = i;
+            neg[nb_++] = -a[i];
+        }
+        else
+        {
+            pos[na_++] = a[i];
         }
     }
-    return a[max];
-}
 
-int find_min(int *a, int n)
-{
-    int min = 0;
-    for (int i = 1; i < n; i++)
+    bucketsort(pos, na_);
+    bucketsort(neg, nb_);
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     if (i < nb_)
+    //     {
+    //         a[i] = -neg[nb_ - i - 1];
+    //     }
+    //     else
+    //     {
+    //         a[i] = pos[i - nb_];
+    //     }
+    // }
+
+    for (int i = 0; i < n; i++)
     {
-        if (a[i] < a[min])
+        if (i < na_)
         {
-            min = i;
+            a[i] = pos[i];
+        }
+        else
+        {
+            a[i] = -neg[nb_ - (i - na_) - 1];
         }
     }
-    return a[min];
 }
